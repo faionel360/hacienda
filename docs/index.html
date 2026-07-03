@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Códigos de Provincia, Cantón, Distrito y Barrio — Costa Rica</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0b5fff">
+</head>
+<body>
+<main class="contenedor">
+  <h1>Códigos de Costa Rica</h1>
+  <p class="subtitulo">Escribe el nombre en cada casilla y elige la opción de la lista para obtener su número.</p>
+
+  <div class="campo">
+    <label for="input-provincia">Provincia</label>
+    <input type="text" id="input-provincia" autocomplete="off" placeholder="Escribe el nombre de la provincia...">
+    <ul class="sugerencias" id="sugerencias-provincia" hidden></ul>
+  </div>
+
+  <div class="campo">
+    <label for="input-canton">Cantón</label>
+    <input type="text" id="input-canton" autocomplete="off" placeholder="Elige primero la provincia" disabled>
+    <ul class="sugerencias" id="sugerencias-canton" hidden></ul>
+  </div>
+
+  <div class="campo">
+    <label for="input-distrito">Distrito</label>
+    <input type="text" id="input-distrito" autocomplete="off" placeholder="Elige primero el cantón" disabled>
+    <ul class="sugerencias" id="sugerencias-distrito" hidden></ul>
+  </div>
+
+  <div class="campo">
+    <label for="input-barrio">Barrio</label>
+    <input type="text" id="input-barrio" autocomplete="off" placeholder="Elige primero el distrito" disabled>
+    <ul class="sugerencias" id="sugerencias-barrio" hidden></ul>
+  </div>
+
+  <section class="resultado">
+    <h2>Resultado</h2>
+    <ul class="resultado-lista">
+      <li id="resultado-provincia">Provincia: <span>—</span></li>
+      <li id="resultado-canton">Cantón: <span>—</span></li>
+      <li id="resultado-distrito">Distrito: <span>—</span></li>
+      <li id="resultado-barrio">Barrio: <span>—</span></li>
+    </ul>
+    <p class="codigo-completo">Código completo: <strong id="codigo-completo">—</strong></p>
+    <div class="botones">
+      <button id="btn-copiar" disabled>Copiar código</button>
+      <button id="btn-reiniciar" class="secundario">Reiniciar búsqueda</button>
+    </div>
+    <p class="mensaje-copiado" id="mensaje-copiado" hidden>Código copiado.</p>
+  </section>
+
+  <p class="aviso">
+    Datos según la codificación oficial de 2016. Puede no incluir cantones o
+    distritos creados después de esa fecha.
+  </p>
+</main>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(() => {
+        // Si falla el registro (ej. abierto con doble clic sin servidor),
+        // la página igual funciona normal, solo sin modo sin conexión.
+      });
+    });
+  }
+</script>
+</body>
+</html>
