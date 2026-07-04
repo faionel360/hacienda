@@ -1,6 +1,6 @@
 {
-  "name": "Códigos de Provincia, Cantón, Distrito y Barrio",
-  "short_name": "Códigos CR",
+  "name": "Generador de Códigos de Direcciones de Hacienda Costa Rica",
+  "short_name": "Direcciones Códigos Hacienda",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f4f6fa",
