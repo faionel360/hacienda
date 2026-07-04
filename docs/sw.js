@@ -1,7 +1,7 @@
 // Service worker mínimo: guarda una copia de los archivos de la app para que
 // funcione sin conexión después de la primera visita (o tras "Agregar a inicio").
 
-const CACHE = "codigos-cr-v1";
+const CACHE = "codigos-cr-v2";
 const ARCHIVOS = [
   "./",
   "./index.html",

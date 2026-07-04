@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  (function () {
+    var tema = localStorage.getItem("tema");
+    if (tema === "claro" || tema === "oscuro") {
+      document.documentElement.dataset.tema = tema;
+    }
+  })();
+</script>
 <title>Códigos de Provincia, Cantón, Distrito y Barrio — Costa Rica</title>
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
@@ -12,7 +20,10 @@
 </head>
 <body>
 <main class="contenedor">
-  <h1>Códigos de Costa Rica</h1>
+  <div class="encabezado">
+    <h1>Códigos de Costa Rica</h1>
+    <button id="btn-tema" class="boton-tema" aria-label="Cambiar tema">🌙</button>
+  </div>
   <p class="subtitulo">Escribe el nombre en cada casilla y elige la opción de la lista para obtener su número.</p>
 
   <div class="campo">

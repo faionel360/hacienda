@@ -10,19 +10,24 @@
       .trim();
   }
 
-  function etiqueta(item) {
-    return `${item.numero} - ${item.nombre || "(sin nombre)"}`;
+  function formatearNumero(numero, pad) {
+    return pad ? String(numero).padStart(2, "0") : String(numero);
+  }
+
+  function etiqueta(item, pad) {
+    return `${formatearNumero(item.numero, pad)} - ${item.nombre || "(sin nombre)"}`;
   }
 
   const MAX_SUGERENCIAS = 50;
 
   class Nivel {
-    constructor({ input, lista, obtenerOpciones, onSeleccionar, onLimpiar }) {
+    constructor({ input, lista, obtenerOpciones, onSeleccionar, onLimpiar, pad = false }) {
       this.input = input;
       this.lista = lista;
       this.obtenerOpciones = obtenerOpciones;
       this.onSeleccionar = onSeleccionar;
       this.onLimpiar = onLimpiar || function () {};
+      this.pad = pad;
       this.seleccion = null;
 
       this.input.addEventListener("input", () => {
@@ -73,7 +78,7 @@
 
       for (const opcion of coincidencias) {
         const li = document.createElement("li");
-        li.textContent = etiqueta(opcion);
+        li.textContent = etiqueta(opcion, this.pad);
         li.tabIndex = 0;
         li.addEventListener("mousedown", (evento) => {
           evento.preventDefault(); // evita que el input pierda foco antes del click
@@ -86,7 +91,7 @@
 
     seleccionar(opcion) {
       this.seleccion = opcion;
-      this.input.value = etiqueta(opcion);
+      this.input.value = etiqueta(opcion, this.pad);
       this.ocultarSugerencias();
       this.onSeleccionar(opcion);
     }
@@ -118,6 +123,7 @@
       actualizarResultado();
     },
     onLimpiar: () => resetearDesde("distrito"),
+    pad: true,
   });
 
   const nivelDistrito = new Nivel({
@@ -130,6 +136,7 @@
       actualizarResultado();
     },
     onLimpiar: () => resetearDesde("barrio"),
+    pad: true,
   });
 
   const nivelBarrio = new Nivel({
@@ -138,6 +145,7 @@
     obtenerOpciones: () => (nivelDistrito.seleccion ? nivelDistrito.seleccion.barrios : []),
     onSeleccionar: () => actualizarResultado(),
     onLimpiar: () => actualizarResultado(),
+    pad: true,
   });
 
   function resetearDesde(nivel) {
@@ -154,22 +162,22 @@
     actualizarResultado();
   }
 
-  function setTexto(idFila, seleccion) {
-    document.querySelector(`#${idFila} span`).textContent = seleccion ? etiqueta(seleccion) : "—";
+  function setTexto(idFila, seleccion, pad) {
+    document.querySelector(`#${idFila} span`).textContent = seleccion ? etiqueta(seleccion, pad) : "—";
   }
 
   function actualizarResultado() {
-    setTexto("resultado-provincia", nivelProvincia.seleccion);
-    setTexto("resultado-canton", nivelCanton.seleccion);
-    setTexto("resultado-distrito", nivelDistrito.seleccion);
-    setTexto("resultado-barrio", nivelBarrio.seleccion);
+    setTexto("resultado-provincia", nivelProvincia.seleccion, nivelProvincia.pad);
+    setTexto("resultado-canton", nivelCanton.seleccion, nivelCanton.pad);
+    setTexto("resultado-distrito", nivelDistrito.seleccion, nivelDistrito.pad);
+    setTexto("resultado-barrio", nivelBarrio.seleccion, nivelBarrio.pad);
 
     const niveles = [nivelProvincia, nivelCanton, nivelDistrito, nivelBarrio];
     const codigoEl = document.getElementById("codigo-completo");
     const btnCopiar = document.getElementById("btn-copiar");
 
     if (niveles.every((n) => n.seleccion)) {
-      const codigo = niveles.map((n) => n.seleccion.numero).join("-");
+      const codigo = niveles.map((n) => formatearNumero(n.seleccion.numero, n.pad)).join("-");
       codigoEl.textContent = codigo;
       btnCopiar.disabled = false;
       btnCopiar.dataset.codigo = codigo;
@@ -206,6 +214,29 @@
     setTimeout(() => {
       mensaje.hidden = true;
     }, 1500);
+  });
+
+  const CLAVE_TEMA = "tema";
+  const btnTema = document.getElementById("btn-tema");
+
+  function temaActual() {
+    const explicito = document.documentElement.dataset.tema;
+    if (explicito === "claro" || explicito === "oscuro") return explicito;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "oscuro" : "claro";
+  }
+
+  function aplicarTema(tema) {
+    document.documentElement.dataset.tema = tema;
+    btnTema.textContent = tema === "oscuro" ? "☀️" : "🌙";
+    btnTema.setAttribute("aria-label", tema === "oscuro" ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
+  }
+
+  aplicarTema(temaActual());
+
+  btnTema.addEventListener("click", () => {
+    const nuevoTema = temaActual() === "oscuro" ? "claro" : "oscuro";
+    localStorage.setItem(CLAVE_TEMA, nuevoTema);
+    aplicarTema(nuevoTema);
   });
 
   actualizarResultado();
